@@ -65,6 +65,7 @@ class ABlasterCharacter : public ACharacter
 
 public:
 	void SetOverlappingWeapon(AWeapon* Weapon);
+	bool IsWeaponEquipped();
 
 	ABlasterCharacter();
 	virtual void Tick(float DeltaTime) override;
