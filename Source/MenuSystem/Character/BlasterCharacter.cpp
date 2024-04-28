@@ -17,6 +17,7 @@
 #include "Net/UnrealNetwork.h"
 #include "MenuSystem/Weapon/Weapon.h"
 #include "MenuSystem/BlasterComponents/CombatComponent.h"
+#include "Components/CapsuleComponent.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -96,6 +97,8 @@ ABlasterCharacter::ABlasterCharacter() :
 	Combat->SetIsReplicated(true);
 
 	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
+	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 
 	// Note: For faster iteration times these variables, and many more, can be tweaked in the Character Blueprint
 	// instead of recompiling to adjust them
