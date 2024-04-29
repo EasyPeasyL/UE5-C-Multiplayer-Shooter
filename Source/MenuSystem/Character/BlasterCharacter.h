@@ -72,10 +72,16 @@ class ABlasterCharacter : public ACharacter
 	UFUNCTION(Server, Reliable)
 	void ServerEquipButtonPressed();
 
+	float AO_Yaw;
+	float AO_Pitch;
+	FRotator StartingAimRotation;
+
 public:
 	void SetOverlappingWeapon(AWeapon* Weapon);
 	bool IsWeaponEquipped();
 	bool IsAiming();
+	FORCEINLINE float GetAO_Yaw() const { return AO_Yaw; }
+	FORCEINLINE float GetAO_Pitch() const { return AO_Pitch; }
 
 	ABlasterCharacter();
 	virtual void Tick(float DeltaTime) override;
@@ -107,6 +113,8 @@ protected:
 	void AimButtonPressed();
 
 	void AimButtonReleased();
+
+	void AimOffset(float DeltaTime);
 
 	// To add mapping context
 	virtual void BeginPlay();
