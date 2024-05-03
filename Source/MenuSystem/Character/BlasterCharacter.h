@@ -123,6 +123,8 @@ protected:
 
 	void AimOffset(float DeltaTime);
 
+	virtual void Jump() override;
+
 	// To add mapping context
 	virtual void BeginPlay();
 
