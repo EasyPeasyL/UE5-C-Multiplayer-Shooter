@@ -21,6 +21,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "BlasterAnimInstance.h"
 #include "MenuSystem/MenuSystem.h"
+#include "MenuSystem/PlayerController/BlasterPlayerController.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -226,13 +227,10 @@ void ABlasterCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
-	//Add Input Mapping Context
-	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	BlasterPlayerController = Cast<ABlasterPlayerController>(Controller);
+	if (BlasterPlayerController)
 	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
-		{
-			Subsystem->AddMappingContext(DefaultMappingContext, 0);
-		}
+		BlasterPlayerController->SetHUDHealth(Health, MaxHealth);
 	}
 }
 

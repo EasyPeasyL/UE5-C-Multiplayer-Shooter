@@ -118,6 +118,8 @@ class ABlasterCharacter : public ACharacter, public IInteractWithCrosshairsInter
 	UFUNCTION()
 	void OnRep_Health();
 
+	class ABlasterPlayerController* BlasterPlayerController;
+
 public:
 	void SetOverlappingWeapon(AWeapon* Weapon);
 	bool IsWeaponEquipped();
