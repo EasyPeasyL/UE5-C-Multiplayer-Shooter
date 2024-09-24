@@ -140,6 +140,7 @@ public:
 	void PlayFireMontage(bool bAiming);
 
 	virtual void OnRep_ReplicatedMovement() override;
+	void Elim();
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
