@@ -8,6 +8,7 @@
 #include "Logging/LogMacros.h"
 #include "MenuSystem/BlasterTypes/TurningInPlace.h"
 #include "MenuSystem/Interfaces/InteractWithCrosshairsInterface.h"
+#include "Components/TimelineComponent.h"
 #include "BlasterCharacter.generated.h"
 
 class USpringArmComponent;
@@ -131,6 +132,24 @@ class ABlasterCharacter : public ACharacter, public IInteractWithCrosshairsInter
 	float ElimDelay = 3.f;
 
 	void ElimTimerFinished();
+
+	/**
+	* Dissolve effect
+	*/
+	UPROPERTY(VisibleAnywhere)
+	UTimelineComponent* DissolveTimeline;
+	FOnTimelineFloat DissolveTrack;
+	UPROPERTY(EditAnywhere)
+	UCurveFloat* DissolveCurve;
+	UFUNCTION()
+	void UpdateDissolveMaterial(float DissolveValue);
+	void StartDissolve();
+	// Dynamic instance that we can change at runtime
+	UPROPERTY(VisibleAnywhere, Category = Elim)
+	UMaterialInstanceDynamic* DynamicDissolveMaterialInstance;
+	// Material instance set on the Blueprint, used with the dynamic material instance
+	UPROPERTY(EditAnywhere, Category = Elim)
+	UMaterialInstance* DissolveMaterialInstance;
 
 public:
 	void SetOverlappingWeapon(AWeapon* Weapon);
