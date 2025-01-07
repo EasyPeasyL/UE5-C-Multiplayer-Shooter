@@ -24,6 +24,8 @@
 #include "MenuSystem/PlayerController/BlasterPlayerController.h"
 #include "MenuSystem/GameMode/BlasterGameMode.h"
 #include "TimerManager.h"
+#include "MenuSystem/PlayerState/BlasterPlayerState.h"
+
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -252,6 +254,7 @@ void ABlasterCharacter::Tick(float DeltaTime)
 	}
 
 	HideCameraIfCharacterClose();
+	PollInit();
 }
 
 void ABlasterCharacter::BeginPlay()
@@ -778,5 +781,18 @@ void ABlasterCharacter::UpdateHUDHealth()
 	if (BlasterPlayerController)
 	{
 		BlasterPlayerController->SetHUDHealth(Health, MaxHealth);
+	}
+}
+
+void ABlasterCharacter::PollInit()
+{
+	if (BlasterPlayerState == nullptr)
+	{
+		BlasterPlayerState = GetPlayerState<ABlasterPlayerState>();
+		if (BlasterPlayerState)
+		{
+			BlasterPlayerState->AddToScore(0.f);
+			//BlasterPlayerState->AddToDefeats(0);
+		}
 	}
 }

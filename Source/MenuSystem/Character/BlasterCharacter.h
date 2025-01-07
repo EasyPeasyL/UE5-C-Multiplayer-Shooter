@@ -151,6 +151,8 @@ class ABlasterCharacter : public ACharacter, public IInteractWithCrosshairsInter
 	UPROPERTY(EditAnywhere, Category = Elim)
 	UMaterialInstance* DissolveMaterialInstance;
 
+	class ABlasterPlayerState* BlasterPlayerState;
+
 public:
 	void SetOverlappingWeapon(AWeapon* Weapon);
 	bool IsWeaponEquipped();
@@ -215,6 +217,8 @@ protected:
 	UFUNCTION()
 	void ReceiveDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, class AController* InstigatorController, AActor* DamageCauser);
 	void UpdateHUDHealth();
+	// Poll for any relelvant classes and initialize our HUD
+	void PollInit();
 
 	// To add mapping context
 	virtual void BeginPlay();
