@@ -122,6 +122,7 @@ class ABlasterCharacter : public ACharacter, public IInteractWithCrosshairsInter
 	UFUNCTION()
 	void OnRep_Health();
 
+	UPROPERTY()
 	class ABlasterPlayerController* BlasterPlayerController;
 
 	bool bElimmed = false;
@@ -151,6 +152,7 @@ class ABlasterCharacter : public ACharacter, public IInteractWithCrosshairsInter
 	UPROPERTY(EditAnywhere, Category = Elim)
 	UMaterialInstance* DissolveMaterialInstance;
 
+	UPROPERTY()
 	class ABlasterPlayerState* BlasterPlayerState;
 
 public:
