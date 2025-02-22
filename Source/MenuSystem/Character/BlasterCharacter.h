@@ -181,6 +181,8 @@ public:
 	FORCEINLINE float GetHealth() const { return Health; }
 	FORCEINLINE float GetMaxHealth() const { return MaxHealth; }
 	ECombatState GetCombatState() const;
+	FORCEINLINE UCombatComponent* GetCombat() const { return Combat; }
+	FORCEINLINE bool GetDisableGameplay() const { return bDisableGameplay; }
 
 	ABlasterCharacter();
 	virtual void Tick(float DeltaTime) override;
@@ -195,6 +197,10 @@ public:
 	void Elim();
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastElim();
+	virtual void Destroyed() override;
+
+	UPROPERTY(Replicated)
+	bool bDisableGameplay = false;
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
@@ -235,6 +241,7 @@ protected:
 	void UpdateHUDHealth();
 	// Poll for any relelvant classes and initialize our HUD
 	void PollInit();
+	void RotateInPlace(float DeltaTime);
 
 	// To add mapping context
 	virtual void BeginPlay();
