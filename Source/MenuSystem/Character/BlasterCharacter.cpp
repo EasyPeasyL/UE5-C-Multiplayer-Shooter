@@ -24,7 +24,9 @@
 #include "MenuSystem/PlayerController/BlasterPlayerController.h"
 #include "MenuSystem/GameMode/BlasterGameMode.h"
 #include "TimerManager.h"
+#include "Kismet/GameplayStatics.h"
 #include "MenuSystem/PlayerState/BlasterPlayerState.h"
+#include "MenuSystem/Weapon/WeaponTypes.h"
 
 
 
@@ -511,6 +513,10 @@ void ABlasterCharacter::MulticastElim_Implementation()
 
 	// Disable character movement
 	bDisableGameplay = true;
+	if (Combat)
+	{
+		Combat->FireButtonPressed(false);
+	}
 	// Disable collision
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -520,7 +526,9 @@ void ABlasterCharacter::Destroyed()
 {
 	Super::Destroyed();
 
-	if (Combat && Combat->EquippedWeapon)
+	ABlasterGameMode* BlasterGameMode = Cast<ABlasterGameMode>(UGameplayStatics::GetGameMode(this));
+	bool bMatchNotInProgress = BlasterGameMode && BlasterGameMode->GetMatchState() != MatchState::InProgress;
+	if (Combat && Combat->EquippedWeapon && bMatchNotInProgress) 
 	{
 		Combat->EquippedWeapon->Destroy();
 	}
