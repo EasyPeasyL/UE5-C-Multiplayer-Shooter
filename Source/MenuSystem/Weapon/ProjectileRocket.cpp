@@ -3,12 +3,22 @@
 
 #include "ProjectileRocket.h"
 #include "Kismet/GameplayStatics.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
+#include "Sound/SoundCue.h"
+#include "Components/BoxComponent.h"
+#include "Sound/SoundCue.h"
+#include "Components/AudioComponent.h"
 
 AProjectileRocket::AProjectileRocket()
 {
 	RocketMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Rocket Mesh"));
 	RocketMesh->SetupAttachment(RootComponent);
 	RocketMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+void AProjectileRocket::Destroyed()
+{
 }
 
 void AProjectileRocket::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
@@ -36,4 +46,49 @@ void AProjectileRocket::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, 
 	}
 
 	Super::OnHit(HitComp, OtherActor, OtherComp, NormalImpulse, Hit);
+}
+
+void AProjectileRocket::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (!HasAuthority())
+	{
+		CollisionBox->OnComponentHit.AddDynamic(this, &AProjectileRocket::OnHit);
+	}
+
+	if (TrailSystem)
+	{
+		TrailSystemComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(
+			TrailSystem,
+			GetRootComponent(),
+			FName(),
+			GetActorLocation(),
+			GetActorRotation(),
+			EAttachLocation::KeepWorldPosition,
+			false
+		);
+	}
+	if (ProjectileLoop && LoopingSoundAttenuation)
+	{
+		ProjectileLoopComponent = UGameplayStatics::SpawnSoundAttached(
+			ProjectileLoop,
+			GetRootComponent(),
+			FName(),
+			GetActorLocation(),
+			EAttachLocation::KeepWorldPosition,
+			false,
+			1.f,
+			1.f,
+			0.f,
+			LoopingSoundAttenuation,
+			(USoundConcurrency*)nullptr,
+			false
+		);
+	}
+}
+
+void AProjectileRocket::DestroyTimerFinished()
+{
+	Destroy();
 }
