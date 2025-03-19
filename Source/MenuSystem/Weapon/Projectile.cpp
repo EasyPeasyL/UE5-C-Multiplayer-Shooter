@@ -9,6 +9,8 @@
 #include "Sound/SoundCue.h"
 #include "MenuSystem/Character/BlasterCharacter.h"
 #include "MenuSystem/MenuSystem.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 
 AProjectile::AProjectile()
 {
@@ -45,6 +47,62 @@ void AProjectile::BeginPlay()
 	if (HasAuthority())
 	{
 		CollisionBox->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);
+	}
+}
+
+void AProjectile::StartDestroyTimer()
+{
+	GetWorldTimerManager().SetTimer(
+		DestroyTimer,
+		this,
+		&AProjectile::DestroyTimerFinished,
+		DestroyTime
+	);
+}
+
+void AProjectile::DestroyTimerFinished()
+{
+	Destroy();
+}
+
+void AProjectile::SpawnTrailSystem()
+{
+	if (TrailSystem)
+	{
+		TrailSystemComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(
+			TrailSystem,
+			GetRootComponent(),
+			FName(),
+			GetActorLocation(),
+			GetActorRotation(),
+			EAttachLocation::KeepWorldPosition,
+			false
+		);
+	}
+}
+
+void AProjectile::ExplodeDamage()
+{
+	APawn* FiringPawn = GetInstigator();
+	if (FiringPawn && HasAuthority())
+	{
+		AController* FiringController = FiringPawn->GetController();
+		if (FiringController)
+		{
+			UGameplayStatics::ApplyRadialDamageWithFalloff(
+				this, // World context object
+				Damage, // BaseDamage
+				10.f, // MinimumDamage
+				GetActorLocation(), // Origin
+				DamageInnerRadius, // DamageInnerRadius
+				DamageOuterRadius, // DamageOuterRadius
+				1.f, // DamageFalloff
+				UDamageType::StaticClass(), // DamageTypeClass
+				TArray<AActor*>(), // IgnoreActors
+				this, // DamageCauser
+				FiringController // InstigatorController
+			);
+		}
 	}
 }
 
