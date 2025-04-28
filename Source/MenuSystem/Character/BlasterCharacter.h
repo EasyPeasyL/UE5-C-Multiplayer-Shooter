@@ -68,6 +68,9 @@ class ABlasterCharacter : public ACharacter, public IInteractWithCrosshairsInter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* ReloadAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* ThrowGrenadeAction;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UWidgetComponent* OverheadWidget;
 
@@ -106,6 +109,9 @@ class ABlasterCharacter : public ACharacter, public IInteractWithCrosshairsInter
 
 	UPROPERTY(EditAnywhere, Category = Combat)
 	UAnimMontage* ElimMontage;
+
+	UPROPERTY(EditAnywhere, Category = Combat)
+	UAnimMontage* ThrowGrenadeMontage;
 
 	void HideCameraIfCharacterClose();
 
@@ -193,6 +199,7 @@ public:
 	void PlayFireMontage(bool bAiming);
 	void PlayReloadMontage();
 	void PlayElimMontage();
+	void PlayThrowGrenadeMontage();
 	virtual void OnRep_ReplicatedMovement() override;
 
 	void Elim();
@@ -239,6 +246,8 @@ protected:
 	void FireButtonReleased();
 	void ReloadButtonPressed(const FInputActionValue& Value);
 	void PlayHitReactMontage();
+	void GrenadeButtonPressed();
+
 
 	UFUNCTION()
 	void ReceiveDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, class AController* InstigatorController, AActor* DamageCauser);
