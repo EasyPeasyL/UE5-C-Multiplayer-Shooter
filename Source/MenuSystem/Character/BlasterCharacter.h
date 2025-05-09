@@ -289,6 +289,8 @@ protected:
 	void ReloadButtonPressed(const FInputActionValue& Value);
 	void PlayHitReactMontage();
 	void GrenadeButtonPressed();
+	void DropOrDestroyWeapon(AWeapon* Weapon);
+	void DropOrDestroyWeapons();
 
 
 	UFUNCTION()
