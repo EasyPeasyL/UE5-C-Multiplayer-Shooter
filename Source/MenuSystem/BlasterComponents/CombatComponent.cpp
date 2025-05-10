@@ -154,11 +154,29 @@ void UCombatComponent::Fire()
 	{
 		bCanFire = false;
 		ServerFire(HitTarget);
+		LocalFire(HitTarget);
 		if (EquippedWeapon)
 		{
 			CrosshairShootingFactor = .75f;
 		}
 		StartFireTimer();
+	}
+}
+
+void UCombatComponent::LocalFire(const FVector_NetQuantize& TraceHitTarget)
+{
+	if (EquippedWeapon == nullptr) return;
+	if (Character && CombatState == ECombatState::ECS_Reloading && EquippedWeapon->GetWeaponType() == EWeaponType::EWT_Shotgun)
+	{
+		Character->PlayFireMontage(bAiming);
+		EquippedWeapon->Fire(TraceHitTarget);
+		CombatState = ECombatState::ECS_Unoccupied;
+		return;
+	}
+	if (Character && CombatState == ECombatState::ECS_Unoccupied)
+	{
+		Character->PlayFireMontage(bAiming);
+		EquippedWeapon->Fire(TraceHitTarget);
 	}
 }
 
@@ -309,19 +327,8 @@ void UCombatComponent::ServerFire_Implementation(const FVector_NetQuantize& Trac
 
 void UCombatComponent::MulticastFire_Implementation(const FVector_NetQuantize& TraceHitTarget)
 {
-	if (EquippedWeapon == nullptr) return;
-	if (Character && CombatState == ECombatState::ECS_Reloading && EquippedWeapon->GetWeaponType() == EWeaponType::EWT_Shotgun)
-	{
-		Character->PlayFireMontage(bAiming);
-		EquippedWeapon->Fire(TraceHitTarget);
-		CombatState = ECombatState::ECS_Unoccupied;
-		return;
-	}
-	if (Character && CombatState == ECombatState::ECS_Unoccupied)
-	{
-		Character->PlayFireMontage(bAiming);
-		EquippedWeapon->Fire(TraceHitTarget);
-	}
+	if (Character && Character->IsLocallyControlled()) return;
+	LocalFire(TraceHitTarget);
 }
 
 void UCombatComponent::EquipWeapon(AWeapon* WeaponToEquip)
