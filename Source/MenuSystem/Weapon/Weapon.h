@@ -124,6 +124,16 @@ protected:
 		int32 OtherBodyIndex
 	);
 
+	/**
+	* Trace end with scatter
+	*/
+
+	UPROPERTY(EditAnywhere, Category = "Weapon Scatter")
+	float DistanceToSphere = 800.f;
+
+	UPROPERTY(EditAnywhere, Category = "Weapon Scatter")
+	float SphereRadius = 75.f;
+
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")
 	USkeletalMeshComponent* WeaponMesh;
@@ -164,16 +174,6 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	EWeaponType WeaponType;
-
-	/**
-	* Trace end with scatter
-	*/
-
-	UPROPERTY(EditAnywhere, Category = "Weapon Scatter")
-	float DistanceToSphere = 800.f;
-
-	UPROPERTY(EditAnywhere, Category = "Weapon Scatter")
-	float SphereRadius = 75.f;
 
 public:
 	void SetWeaponState(EWeaponState State);
