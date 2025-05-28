@@ -13,7 +13,6 @@
 #include "MenuSystem/HUD/Announcement.h"
 #include "Kismet/GameplayStatics.h"
 #include "MenuSystem/BlasterComponents/CombatComponent.h"
-#include "MenuSystem/Weapon/Weapon.h"
 #include "MenuSystem/GameState/BlasterGameState.h"
 #include "Components/Image.h"
 
@@ -119,16 +118,23 @@ void ABlasterPlayerController::StopHighPingWarning()
 
 void ABlasterPlayerController::CheckPing(float DeltaTime)
 {
+	if (HasAuthority()) return;
 	HighPingRunningTime += DeltaTime;
 	if (HighPingRunningTime > CheckPingFrequency)
 	{
 		if (!PlayerState) PlayerState = GetPlayerState<APlayerState>();
 		if (PlayerState)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("PlayerState->GetPing() * 4 : %d"), PlayerState->GetPingInMilliseconds() * 4);
 			if (PlayerState->GetPingInMilliseconds() * 4 > HighPingThreshold) // ping is compressed; it's actually ping / 4
 			{
 				HighPingWarning();
 				PingAnimationRunningTime = 0.f;
+				ServerReportPingStatus(true);
+			}
+			else
+			{
+				ServerReportPingStatus(false);
 			}
 		}
 		HighPingRunningTime = 0.f;
@@ -185,6 +191,12 @@ void ABlasterPlayerController::OnRep_MatchState()
 	{
 		HandleCooldown();
 	}
+}
+
+// Is the ping too high?
+void ABlasterPlayerController::ServerReportPingStatus_Implementation(bool bHighPing)
+{
+	HighPingDelegate.Broadcast(bHighPing);
 }
 
 void ABlasterPlayerController::ClientReportServerTime_Implementation(float TimeOfClientRequest, float TimeServerReceivedClientRequest)
